@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CS2 Pro Tournament Hub & Manager</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas for image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #050608;
+            --bg-card: #0d1017;
+            --bg-card-hover: #131822;
+            
+            --accent-purple: #8b5cf6;
+            --accent-purple-glow: rgba(139, 92, 246, 0.4);
+            
+            --accent-red: #ff4655;
+            --accent-red-glow: rgba(255, 70, 85, 0.4);
+            --accent-blue: #00fbff;
+            --accent-blue-glow: rgba(0, 251, 255, 0.4);
+
+            --text-main: #8b9bb4;
+            --text-white: #ffffff;
+            --border-color: #1a2232;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            overflow-x: hidden;
+            width: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 85% 90%, rgba(16, 185, 129, 0.04) 0%, transparent 45%);
+        }
+
+        header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-card);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            border-top: 4px solid var(--accent-purple);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--accent-purple);
+            filter: drop-shadow(0 0 10px var(--accent-purple-glow));
+        }
+
+        .logo h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            color: var(--text-white);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: var(--text-white);
+            border: none;
+            padding: 10px 18px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px var(--accent-purple-glow);
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(139, 92, 246, 0.6);
+            background: linear-gradient(135deg, #9333ea, #6d28d9);
+        }
+
+        .btn-secondary {
+            background: #131822;
+            box-shadow: none;
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background: #1c2436;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            color: #fff;
+        }
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        main {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 20px 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        @media(min-width: 768px) {
+            .section-card {
+                padding: 30px;
+            }
+            .logo h1 {
+                font-size: 26px;
+            }
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--accent-purple);
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            color: var(--text-white);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title i {
+            color: var(--accent-purple);
+            font-size: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media(min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 2fr 3fr auto;
+                align-items: end;
+                gap: 20px;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 12px 14px;
+            border-radius: 8px;
+            color: var(--text-white);
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 10px var(--accent-purple-glow);
+        }
+
+        .avatar-select-grid {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .avatar-option {
+            background: var(--bg-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            padding: 6px;
+        }
+
+        .avatar-option svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--text-main);
+            transition: fill 0.25s ease;
+        }
+
+        .avatar-option.selected {
+            border-color: var(--accent-purple);
+            background: rgba(139, 92, 246, 0.15);
+            box-shadow: 0 0 12px var(--accent-purple-glow);
+        }
+
+        .avatar-option.selected svg {
+            fill: var(--accent-purple);
+        }
+
+        .approved-players-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media(min-width: 550px) {
+            .approved-players-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+
+        .player-chip {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .player-chip-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .avatar-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: #131822;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            flex-shrink: 0;
+            fill: var(--accent-purple);
+        }
+
+        .avatar-box svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .player-chip-name {
+            font-weight: 700;
+            color: var(--text-white);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-chip-rating {
+            background: rgba(139, 92, 246, 0.15);
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        /* Jamoalar qat'iy yonma-yon */
+        .teams-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        @media(min-width: 768px) {
+            .teams-container {
+                gap: 20px;
+            }
+        }
+
+        .team-box {
+            border-radius: 14px;
+            padding: 10px 6px;
+            border: 1px solid;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            overflow: hidden;
+        }
+
+        @media(min-width: 768px) {
+            .team-box {
+                padding: 24px;
+            }
+        }
+
+        .team-box.alpha {
+            background: linear-gradient(150deg, #18090d, #080305);
+            border-color: rgba(255, 70, 85, 0.4);
+            border-top: 4px solid var(--accent-red);
+        }
+
+        .team-box.beta {
+            background: linear-gradient(150deg, #041218, #020609);
+            border-color: rgba(0, 251, 255, 0.4);
+            border-top: 4px solid var(--accent-blue);
+        }
+
+        .team-header {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        @media(min-width: 480px) {
+            .team-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .team-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media(min-width: 768px) {
+            .team-title-wrap {
+                font-size: 22px;
+                gap: 10px;
+            }
+        }
+
+        .team-box.alpha .team-title-wrap { color: var(--accent-red); text-shadow: 0 0 10px var(--accent-red-glow); }
+        .team-box.beta .team-title-wrap { color: var(--accent-blue); text-shadow: 0 0 10px var(--accent-blue-glow); }
+
+        .team-power-badge {
+            padding: 2px 5px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        @media(min-width: 768px) {
+            .team-power-badge {
+                padding: 5px 12px;
+                font-size: 12px;
+                border-radius: 8px;
+                gap: 6px;
+            }
+        }
+
+        .team-box.alpha .team-power-badge { background: rgba(255, 70, 85, 0.15); color: #ffa3a8; border: 1px solid rgba(255, 70, 85, 0.3); }
+        .team-box.beta .team-power-badge { background: rgba(0, 251, 255, 0.15); color: #a3ffff; border: 1px solid rgba(0, 251, 255, 0.3); }
+
+        .team-members-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .team-member-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(13, 16, 23, 0.85);
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        @media(min-width: 768px) {
+            .team-member-card {
+                padding: 12px 14px;
+                border-radius: 12px;
+            }
+        }
+
+        .team-box.alpha .team-member-card { border-left: 3px solid var(--accent-red); }
+        .team-box.beta .team-member-card { border-left: 3px solid var(--accent-blue); }
+
+        .member-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow: hidden;
+        }
+
+        @media(min-width: 768px) {
+            .member-info {
+                gap: 12px;
+            }
+        }
+
+        .member-name {
+            font-weight: 700;
+            color: var(--text-white);
+            font-size: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media(min-width: 768px) {
+            .member-name {
+                font-size: 14px;
+            }
+        }
+
+        .member-rating {
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        @media(min-width: 768px) {
+            .member-rating {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+        }
+
+        .team-box.alpha .member-rating { background: rgba(255, 70, 85, 0.15); color: #ffa3a8; border: 1px solid rgba(255, 70, 85, 0.3); }
+        .team-box.beta .member-rating { background: rgba(0, 251, 255, 0.15); color: #a3ffff; border: 1px solid rgba(0, 251, 255, 0.3); }
+
+        /* FAQAT ELO YOZUVI VA RAQAMI UCHUN YORQIN NEON EFEKT */
+        .owner-elo-glow {
+            background: #10b981 !important;
+            color: #000000 !important;
+            font-weight: 900 !important;
+            border: 1px solid #00ff66 !important;
+            box-shadow: 0 0 12px #00ff66, 0 0 22px rgba(0, 255, 102, 0.8) !important;
+            animation: eloNeonPulse 1.2s infinite alternate !important;
+        }
+
+        @keyframes eloNeonPulse {
+            0% { box-shadow: 0 0 5px #00ff66, 0 0 10px rgba(0,255,102,0.4); }
+            100% { box-shadow: 0 0 15px #00ff66, 0 0 25px rgba(0,255,102,0.9); }
+        }
+
+        .empty-teams-msg, .empty-approved-msg {
+            text-align: center;
+            padding: 25px 15px;
+            color: #64748b;
+            font-style: italic;
+            background: var(--bg-dark);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
+            font-size: 14px;
+            grid-column: 1 / -1;
+        }
+
+        #admin-panel {
+            display: none;
+            border-left-color: var(--accent-purple);
+        }
+
+        .admin-controls-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: var(--bg-dark);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        @media(min-width: 768px) {
+            .admin-controls-grid { 
+                grid-template-columns: repeat(3, 1fr); 
+                padding: 20px;
+            }
+        }
+
+        .admin-players-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .admin-players-table th, .admin-players-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+        }
+
+        @media(min-width: 768px) {
+            .admin-players-table th, .admin-players-table td {
+                padding: 16px 20px;
+                font-size: 14px;
+            }
+        }
+
+        .admin-players-table th {
+            background: #131822;
+            color: var(--text-white);
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 13px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .status-badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .status-badge.approved { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 6, 8, 0.88);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            padding: 25px 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent-purple);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+
+        .modal-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            color: var(--text-white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 15px;
+            left: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            color: var(--text-white);
+            padding: 14px 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1100;
+            transform: translateY(150px);
+            opacity: 1;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border-color);
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .slot-machine-box {
+            background: linear-gradient(135deg, #0d1017, #131822);
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            border-radius: 14px;
+            height: 70px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .slot-team-icon {
+            position: absolute;
+            left: 15px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 0 8px currentColor);
+            z-index: 5;
+        }
+
+        .slot-reel-wrapper {
+            height: 70px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slot-reel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            width: 100%;
+        }
+
+        .slot-item {
+            height: 70px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-white);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .slot-item .avatar-box {
+            width: 36px;
+            height: 36px;
+            padding: 6px;
+        }
+
+        .last-player-banner {
+            display: none;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(16, 185, 129, 0.2));
+            border: 1px solid var(--accent-purple);
+            color: var(--text-white);
+            padding: 14px;
+            border-radius: 12px;
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px var(--accent-purple-glow);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-crosshairs"></i>
+            <h1>CS</h1>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" id="voice-call-toggle-btn" onclick="toggleVoiceCall()">
+                <i class="fa-solid fa-phone" id="voice-icon"></i> <span id="voice-btn-text">Aloqa</span>
+            </button>
+            <button class="btn btn-secondary" id="admin-toggle-btn" onclick="openAdminLoginModal()">
+                <i class="fa-solid fa-lock"></i> Admin
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- PUBLIC REGISTRATION SECTION -->
+        <section class="section-card">
+            <h2 class="section-title"><i class="fa-solid fa-user-plus"></i> Ro'yxatdan O'tish</h2>
+            <form id="public-reg-form" onsubmit="handlePublicRegistration(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="reg-nickname">Nik name</label>
+                        <input type="text" id="reg-nickname" class="form-control" placeholder="Masalan: s1mple..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tanlang:</label>
+                        <div class="avatar-select-grid" id="avatar-options-container">
+                            <!-- Dynamic Character Icons -->
+                        </div>
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn" style="height: 48px; justify-content: center; width: 100%;"><i class="fa-solid fa-paper-plane"></i> Yuborish</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- APPROVED PLAYERS PUBLIC SECTION -->
+        <section class="section-card">
+            <h2 class="section-title"><i class="fa-solid fa-users"></i> Tasdiqlangan (<span id="approved-count">0</span>)</h2>
+            <div id="approved-players-container">
+                <!-- Approved players chips -->
+            </div>
+        </section>
+
+        <!-- PUBLIC TEAMS & MATCHUPS DISPLAY -->
+        <section class="section-card" id="tournament-banner-area">
+            <h2 class="section-title"><i class="fa-solid fa-users-rectangle"></i> Jamoalar Taqsimoti</h2>
+            
+            <div class="last-player-banner" id="last-player-banner">
+                <i class="fa-solid fa-bolt" style="color: var(--accent-purple);"></i> Oxirgi ishtirokchi avtomatik ravishda jamoaga qo'shildi!
+            </div>
+
+            <div class="slot-machine-box" id="slot-machine-container">
+                <div class="slot-team-icon" id="slot-team-icon">
+                    <i class="fa-solid fa-shield" style="color: var(--accent-blue);"></i>
+                </div>
+                <div class="slot-reel-wrapper">
+                    <div class="slot-reel" id="slot-reel">
+                        <div class="slot-item">...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="public-teams-container" class="teams-container">
+                <div class="empty-teams-msg">
+                    <i class="fa-solid fa-hourglass-start" style="font-size: 30px; margin-bottom: 10px; display: block; color: var(--accent-purple);"></i>
+                    Hali jamoalar tuzilmadi. Admin tomonidan random qilinishini kuting...
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN PANEL (Protected) -->
+        <section class="section-card" id="admin-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 class="section-title" style="margin-bottom: 0;"><i class="fa-solid fa-sliders"></i> Admin Panel</h2>
+                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 11px;" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Chiqish</button>
+            </div>
+
+            <div class="admin-controls-grid">
+                <div>
+                    <h3 style="font-family:'Rajdhani'; font-size:15px; color:var(--text-white); margin-bottom:10px; text-transform:uppercase;">Jamoalarni Shakllantirish</h3>
+                    <button class="btn" style="width: 100%; justify-content: center; padding: 12px; font-size: 12px; margin-bottom: 8px;" onclick="confirmAndTriggerRandom()">
+                        <i class="fa-solid fa-shuffle"></i> RANDOM & BALANSLASH
+                    </button>
+                    <button class="btn btn-warning" id="stop-slot-btn" style="width: 100%; justify-content: center; padding: 10px; font-size: 12px; display: none;" onclick="stopSlotEarly()">
+                        <i class="fa-solid fa-stop"></i> RULETKANI TO'XTATISH
+                    </button>
+                </div>
+                <div>
+                    <h3 style="font-family:'Rajdhani'; font-size:15px; color:var(--text-white); margin-bottom:10px; text-transform:uppercase;">Jamoalarni O'chirish</h3>
+                    <button class="btn btn-danger" style="width: 100%; justify-content: center; padding: 12px; font-size: 12px;" onclick="clearTeamsOnly()">
+                        <i class="fa-solid fa-user-group-slash"></i> Jamoalarni Tozalash
+                    </button>
+                </div>
+                <div>
+                    <h3 style="font-family:'Rajdhani'; font-size:15px; color:var(--text-white); margin-bottom:10px; text-transform:uppercase;">Barchasini Tozalash</h3>
+                    <button class="btn btn-danger" style="width: 100%; justify-content: center; padding: 12px; font-size: 12px;" onclick="resetTournament()">
+                        <i class="fa-solid fa-trash"></i> Hammasini O'chirish
+                    </button>
+                </div>
+            </div>
+
+            <h3 style="font-family:'Rajdhani'; font-size:16px; color:var(--text-white); margin-bottom:10px; text-transform:uppercase;">So'rovlar (<span id="total-players-count">0</span>)</h3>
+            <div style="overflow-x: auto;">
+                <table class="admin-players-table">
+                    <thead>
+                        <tr>
+                            <th>Nishon</th>
+                            <th>Nik</th>
+                            <th>Holat</th>
+                            <th>Reyting</th>
+                            <th>Gapirish Ruxsati</th>
+                            <th>Harakat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-players-tbody">
+                        <!-- Dynamic players list -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Audio container -->
+    <div id="audio-container" style="display: none;"></div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="admin-login-modal">
+        <div class="modal-content">
+            <h3 class="modal-title"><i class="fa-solid fa-lock"></i> Admin Paroli</h3>
+            <div class="form-group">
+                <input type="password" id="admin-password-input" class="form-control" placeholder="Parol...">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 5px;">
+                <button class="btn btn-secondary" onclick="closeAdminLoginModal()">Bekor qilish</button>
+                <button class="btn" onclick="verifyAdminPassword()">Kirish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="notification" id="toast-notification">
+        <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 20px;"></i>
+        <span id="toast-message" style="font-weight: 500; font-size: 13px;">Muvaffaqiyatli!</span>
+    </div>
+
+    <!-- Firebase SDK Modular Import -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            getDatabase,
+            ref,
+            set,
+            push,
+            onValue,
+            remove,
+            update,
+            get
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            databaseURL: "https://stream-shelf-b9099-default-rtdb.firebaseio.com",
+            projectId: "stream-shelf-b9099"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db_fb = getDatabase(app);
+
+        const playersRef = ref(db_fb, "cs_tournament/players");
+        const teamsRef = ref(db_fb, "cs_tournament/teamsState");
+        const slotStateRef = ref(db_fb, "cs_tournament/slotState");
+        const voiceRoomRef = ref(db_fb, "cs_tournament/voiceRoom");
+
+        const BOT_TOKEN = "8767981544:AAHDXIj6qMT-NGKjfBKKZ05LRzqs4uR2ALE";
+        const ADMIN_USER_ID = "5256241453";
+
+        let deviceId = localStorage.getItem('cs_device_id');
+        if (!deviceId) {
+            deviceId = 'dev_' + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('cs_device_id', deviceId);
+        }
+
+        const CS_CHARACTERS = [
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19C19,19.55 18.55,20 18,20H6C5.45,20 5,19.55 5,19V18H19V19Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M11,15H6L13,1V9H18L11,23V15Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,3.18L19,6.3V11C19,15.33 15.94,19.35 12,20.49C8.06,19.35 5,15.33 5,11V6.3L12,3.18Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,7A5,5 0 0,0 7,12A5,5 0 0,0 12,17A5,5 0 0,0 17,12A5,5 0 0,0 12,7M12,9A3,3 0 0,1 15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M12,2C7.03,2 3,6.03 3,11V22L6,19L9,22L12,19L15,22L18,19L21,22V11C21,6.03 16.97,2 12,2M8,9H10V11H8V9M14,9H16V11H14V9Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M2,13H8V11H2M5,3A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3H5M5,5H19V19H5V5Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M4,6H20V18H4V6M6,8V16H18V8H6M9,10H11V12H9V10M13,10H15V12H13V10M9,13H11V15H9V13M13,13H15V15H13V13Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M17.56,19.39C16.89,20.25 15.65,20.5 14.5,20.24C12.87,19.86 11.69,18.42 11.66,16.73C11.64,15.33 12.35,14.07 13.5,13.35C12.44,14.39 12.04,15.96 12.5,17.41C12.8,18.35 13.73,19.06 14.73,19.14C16.4,19.28 17.88,18.15 18.12,16.5C18.4,14.56 16.94,12.72 15,12.5C13.88,12.37 12.78,12.86 12.11,13.76C11.65,11.55 12.91,9.36 15,8.5C12.5,9.25 10.5,11.5 10,14C9.5,11 11,8 14,6C11.5,6.75 9.4,8.84 8.7,11.38C7.89,14.33 9.42,17.5 12.2,18.78C10.5,17.5 9.8,15.2 10.5,13C8.5,14.5 7.8,17.3 9.1,19.6C7.3,18.2 6.5,15.8 7.2,13.5C6.1,15.2 6.1,17.5 7.3,19.2C5.5,17.8 4.7,15.3 5.5,13C4,14.8 3.8,17.5 5,19.7C3.3,17.8 3,15 4,12.7C2.9,15.1 3.2,18.1 5.3,20.1C7.2,21.8 10,22.2 12.4,21.2C14.7,20.2 16.5,18.2 17.1,15.8C16.5,17.2 16.8,18.6 17.56,19.39Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12C2,14.6 3,17 4.6,18.8L3.3,21.5L6,20.2C7.8,21.4 10,22 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M9,9A1,1 0 0,1 10,10A1,1 0 0,1 9,11A1,1 0 0,1 8,10A1,1 0 0,1 9,9M15,9A1,1 0 0,1 16,10A1,1 0 0,1 15,11A1,1 0 0,1 14,10A1,1 0 0,1 15,9M12,13C14,13 15.7,14.2 16.3,16H7.7C8.3,14.2 10,13 12,13Z"/></svg>` },
+            { name: "", svg: `<svg viewBox="0 0 24 24"><path d="M18,2A2,2 0 0,1 20,4V6H22V10C22,12.21 20.21,14 18,14H17.89C17.05,16.31 14.83,18 12.19,18.39V20H15V22H9V20H11.81V18.39C9.17,18 6.95,16.31 6.11,14H6C3.79,14 2,12.21 2,10V6H4V4A2,2 0 0,1 6,2H18M4,8V10C4,11.1 4.9,12 6,12H7V8H4M20,10V8H17V12H18C19.1,12 20,11.1 20,10Z"/></svg>` }
+        ];
+
+        let selectedAvatarIndex = 0;
+        let players = [];
+        let teamsState = null;
+        let isAdminLoggedIn = sessionStorage.getItem('cs_admin_logged') === 'true';
+
+        let isVoiceConnected = false;
+        let localStream = null;
+        let peerConnections = {};
+        const rtcConfig = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+        let myParticipantKey = null;
+        let currentAnimationTimeout = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAvatarPicker();
+            setupFirebaseListeners();
+            if(isAdminLoggedIn) {
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('admin-toggle-btn').innerHTML = '<i class="fa-solid fa-unlock"></i> Admin';
+            }
+        });
+
+        function renderAvatarPicker() {
+            const container = document.getElementById('avatar-options-container');
+            container.innerHTML = '';
+            CS_CHARACTERS.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = `avatar-option ${index === selectedAvatarIndex ? 'selected' : ''}`;
+                div.innerHTML = item.svg;
+                div.title = item.name;
+                div.onclick = () => {
+                    selectedAvatarIndex = index;
+                    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected');
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-notification');
+            const toastMsg = document.getElementById('toast-message');
+            toast.style.borderLeftColor = isError ? 'var(--danger)' : 'var(--success)';
+            toast.querySelector('i').className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+            toast.querySelector('i').style.color = isError ? 'var(--danger)' : 'var(--success)';
+            toastMsg.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function setupFirebaseListeners() {
+            onValue(playersRef, (snapshot) => {
+                const data = snapshot.val();
+                players = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        const p = { id: key, ...data[key] };
+                        players.push(p);
+                        if (p.deviceId === deviceId) {
+                            myParticipantKey = key;
+                            updateLocalMicState(p.voiceAccess);
+                        }
+                    });
+                }
+                updateUI();
+            });
+
+            onValue(teamsRef, (snapshot) => {
+                teamsState = snapshot.val();
+                updateUI();
+            });
+
+            onValue(slotStateRef, (snapshot) => {
+                const slotData = snapshot.val();
+                const slotBox = document.getElementById('slot-machine-container');
+                const slotReel = document.getElementById('slot-reel');
+                const teamIconContainer = document.getElementById('slot-team-icon');
+                const lastPlayerBanner = document.getElementById('last-player-banner');
+                const stopBtn = document.getElementById('stop-slot-btn');
+
+                if (!slotData || !slotData.active) {
+                    slotBox.style.display = 'none';
+                    lastPlayerBanner.style.display = 'none';
+                    if(stopBtn) stopBtn.style.display = 'none';
+                    if(currentAnimationTimeout) clearTimeout(currentAnimationTimeout);
+                    return;
+                }
+
+                document.getElementById('tournament-banner-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                slotBox.style.display = 'flex';
+                if(isAdminLoggedIn && stopBtn) stopBtn.style.display = 'block';
+
+                if (slotData.isLastPlayer) {
+                    slotBox.style.display = 'none';
+                    lastPlayerBanner.style.display = 'block';
+                    if(stopBtn) stopBtn.style.display = 'none';
+                    return;
+                }
+
+                lastPlayerBanner.style.display = 'none';
+
+                if (slotData.teamType === "beta") {
+                    teamIconContainer.innerHTML = `<i class="fa-solid fa-shield" style="color: var(--accent-blue);"></i>`;
+                    slotBox.style.borderColor = "var(--accent-blue)";
+                    slotBox.style.boxShadow = "0 0 25px var(--accent-blue-glow)";
+                } else {
+                    teamIconContainer.innerHTML = `<i class="fa-solid fa-shield-halved" style="color: var(--accent-red);"></i>`;
+                    slotBox.style.borderColor = "var(--accent-red)";
+                    slotBox.style.boxShadow = "0 0 25px var(--accent-red-glow)";
+                }
+
+                let poolForReel = slotData.pool || [];
+                slotReel.style.transition = 'none';
+                slotReel.style.transform = 'translateY(0px)';
+                
+                slotReel.innerHTML = poolForReel.map(p => {
+                    let svgIcon = CS_CHARACTERS[p.avatarIndex || 0].svg;
+                    return `<div class="slot-item"><div class="avatar-box" style="fill: var(--accent-blue);">${svgIcon}</div><span>${escapeHtml(p.nickname)}</span></div>`;
+                }).join('');
+
+                let targetIndex = poolForReel.length - 1;
+                let targetOffset = targetIndex * 70;
+
+                setTimeout(() => {
+                    slotReel.style.transition = 'transform 7s cubic-bezier(0.05, 0.85, 0.12, 1)';
+                    slotReel.style.transform = `translateY(-${targetOffset}px)`;
+                }, 50);
+            });
+        }
+
+        function updateLocalMicState(voiceAccess) {
+            if (localStream) {
+                localStream.getAudioTracks().forEach(track => {
+                    track.enabled = !!voiceAccess;
+                });
+            }
+        }
+
+        window.handlePublicRegistration = async function(e) {
+            e.preventDefault();
+            const nicknameInput = document.getElementById('reg-nickname');
+            const nickname = nicknameInput.value.trim();
+
+            if(!nickname) {
+                showToast("Nikneym bo'sh bo'lishi mumkin emas!", true);
+                return;
+            }
+
+            try {
+                const snapshot = await get(playersRef);
+                const data = snapshot.val();
+                
+                if (data) {
+                    let exists = false;
+                    Object.keys(data).forEach(key => {
+                        if (data[key].nickname.trim().toLowerCase() === nickname.toLowerCase() && data[key].deviceId !== deviceId) {
+                            exists = true;
+                        }
+                    });
+                    if (exists) {
+                        showToast("Bu nik allaqachon band qilingan! Boshqa nik kiriting.", true);
+                        return;
+                    }
+                }
+
+                let deletePromises = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        if (data[key].deviceId === deviceId) {
+                            deletePromises.push(remove(ref(db_fb, `cs_tournament/players/${key}`)));
+                        }
+                    });
+                }
+
+                if (deletePromises.length > 0) {
+                    await Promise.all(deletePromises);
+                }
+
+                const newPlayerObject = {
+                    nickname: nickname,
+                    rating: 3,
+                    status: 'pending',
+                    voiceAccess: false,
+                    avatarIndex: selectedAvatarIndex,
+                    deviceId: deviceId
+                };
+
+                const newRef = push(playersRef);
+                await set(newRef, newPlayerObject);
+                myParticipantKey = newRef.key;
+
+                showToast(deletePromises.length > 0 ? "So'rovingiz yangilandi!" : "So'rovingiz yuborildi!");
+                nicknameInput.value = '';
+            } catch (err) {
+                console.error("Registration error:", err);
+                showToast("Xatolik yuz berdi!", true);
+            }
+        };
+
+        window.toggleVoiceCall = async function() {
+            const myPlayer = players.find(p => p.deviceId === deviceId);
+            if (!myPlayer) {
+                showToast("Avval ro'yxatdan o'ting!", true);
+                return;
+            }
+
+            const toggleBtn = document.getElementById('voice-call-toggle-btn');
+            const voiceIcon = document.getElementById('voice-icon');
+            const btnText = document.getElementById('voice-btn-text');
+
+            if (!isVoiceConnected) {
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, 
+                        video: false 
+                    });
+
+                    const hasVoiceAccess = !!myPlayer.voiceAccess;
+                    localStream.getAudioTracks().forEach(track => { track.enabled = hasVoiceAccess; });
+
+                    isVoiceConnected = true;
+                    toggleBtn.className = "btn btn-danger";
+                    voiceIcon.className = "fa-solid fa-phone-slash";
+                    btnText.innerText = "Tugatish";
+                    
+                    showToast(hasVoiceAccess ? "Ovozli aloqaga ulandingiz!" : "Aloqaga ulandingiz! Eshitib turibsiz.");
+                    startSignalingMesh();
+                } catch (err) {
+                    showToast("Mikrofonga ruxsat berilmadi!", true);
+                }
+            } else {
+                stopVoiceCall();
+            }
+        };
+
+        function stopVoiceCall() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            Object.keys(peerConnections).forEach(pid => {
+                if (peerConnections[pid]) peerConnections[pid].close();
+            });
+            peerConnections = {};
+            document.getElementById('audio-container').innerHTML = '';
+
+            if (myParticipantKey) {
+                remove(ref(db_fb, `cs_tournament/voiceRoom/${myParticipantKey}`)).catch(() => {});
+            }
+
+            isVoiceConnected = false;
+            const toggleBtn = document.getElementById('voice-call-toggle-btn');
+            const voiceIcon = document.getElementById('voice-icon');
+            const btnText = document.getElementById('voice-btn-text');
+
+            toggleBtn.className = "btn btn-secondary";
+            voiceIcon.className = "fa-solid fa-phone";
+            btnText.innerText = "Aloqa";
+            showToast("Ovozli aloqa yakunlandi.");
+        }
+
+        function startSignalingMesh() {
+            if (!myParticipantKey) return;
+            const myRoomRef = ref(db_fb, `cs_tournament/voiceRoom/${myParticipantKey}`);
+            set(myRoomRef, { deviceId, online: true });
+
+            onValue(voiceRoomRef, (snapshot) => {
+                if (!isVoiceConnected) return;
+                const activeUsers = snapshot.val() || {};
+
+                Object.keys(activeUsers).forEach(participantKey => {
+                    if (participantKey === myParticipantKey) return;
+
+                    if (!peerConnections[participantKey]) {
+                        const pc = new RTCPeerConnection(rtcConfig);
+                        peerConnections[participantKey] = pc;
+
+                        if (localStream) {
+                            localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+                        }
+
+                        pc.onicecandidate = (event) => {
+                            if (event.candidate) {
+                                set(push(ref(db_fb, `cs_tournament/signals/${participantKey}/${myParticipantKey}`)), {
+                                    type: 'candidate', candidate: JSON.stringify(event.candidate)
+                                });
+                            }
+                        };
+
+                        pc.ontrack = (event) => {
+                            let remoteAudio = document.getElementById(`audio_${participantKey}`);
+                            if (!remoteAudio) {
+                                remoteAudio = document.createElement('audio');
+                                remoteAudio.id = `audio_${participantKey}`;
+                                remoteAudio.autoplay = true;
+                                remoteAudio.playsInline = true;
+                                document.getElementById('audio-container').appendChild(remoteAudio);
+                            }
+                            if (remoteAudio.srcObject !== event.streams[0]) {
+                                remoteAudio.srcObject = event.streams[0];
+                            }
+                        };
+
+                        if (myParticipantKey > participantKey) {
+                            pc.createOffer().then(offer => {
+                                pc.setLocalDescription(offer);
+                                set(push(ref(db_fb, `cs_tournament/signals/${participantKey}/${myParticipantKey}`)), {
+                                    type: 'offer', sdp: JSON.stringify(offer)
+                                });
+                            });
+                        }
+
+                        onValue(ref(db_fb, `cs_tournament/signals/${myParticipantKey}/${participantKey}`), (sigSnap) => {
+                            const sigs = sigSnap.val();
+                            if (!sigs) return;
+                            Object.keys(sigs).forEach(sigKey => {
+                                const sig = sigs[sigKey];
+                                if (sig.type === 'offer' && pc.signalingState === "stable") {
+                                    pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(sig.sdp)))
+                                        .then(() => pc.createAnswer())
+                                        .then(answer => {
+                                            pc.setLocalDescription(answer);
+                                            set(push(ref(db_fb, `cs_tournament/signals/${participantKey}/${myParticipantKey}`)), {
+                                                type: 'answer', sdp: JSON.stringify(answer)
+                                            });
+                                        });
+                                } else if (sig.type === 'answer' && pc.signalingState === "have-local-offer") {
+                                    pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(sig.sdp)));
+                                } else if (sig.type === 'candidate' && sig.candidate) {
+                                    pc.addIceCandidate(new RTCIceCandidate(JSON.parse(sig.candidate))).catch(() => {});
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        }
+
+        window.openAdminLoginModal = function() {
+            if(isAdminLoggedIn) {
+                isAdminLoggedIn = false;
+                sessionStorage.removeItem('cs_admin_logged');
+                document.getElementById('admin-panel').style.display = 'none';
+                document.getElementById('admin-toggle-btn').innerHTML = '<i class="fa-solid fa-lock"></i> Admin';
+                showToast("Chiqildi.");
+                return;
+            }
+            document.getElementById('admin-login-modal').style.display = 'flex';
+        }
+
+        window.closeAdminLoginModal = function() {
+            document.getElementById('admin-login-modal').style.display = 'none';
+            document.getElementById('admin-password-input').value = '';
+        }
+
+        window.verifyAdminPassword = function() {
+            const pass = document.getElementById('admin-password-input').value;
+            if(pass === '0205') {
+                isAdminLoggedIn = true;
+                sessionStorage.setItem('cs_admin_logged', 'true');
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('admin-toggle-btn').innerHTML = '<i class="fa-solid fa-unlock"></i> Admin';
+                closeAdminLoginModal();
+                showToast("Xush kelibsiz, Admin!");
+            } else {
+                showToast("Parol noto'g'ri!", true);
+            }
+        }
+
+        window.logoutAdmin = function() {
+            isAdminLoggedIn = false;
+            sessionStorage.removeItem('cs_admin_logged');
+            document.getElementById('admin-panel').style.display = 'none';
+            document.getElementById('admin-toggle-btn').innerHTML = '<i class="fa-solid fa-lock"></i> Admin';
+            showToast("Chiqildi.");
+        }
+
+        window.approvePlayer = function(id) {
+            update(ref(db_fb, `cs_tournament/players/${id}`), { status: 'approved' }).then(() => {
+                showToast("Tasdiqlandi!");
+            });
+        }
+
+        window.toggleVoiceAccess = function(id, currentAccess) {
+            const newAccess = !currentAccess;
+            update(ref(db_fb, `cs_tournament/players/${id}`), { voiceAccess: newAccess }).then(() => {
+                showToast(newAccess ? "Gapirish ruxsati berildi!" : "Ruxsat olib tashlandi!");
+            });
+        }
+
+        window.updatePlayerRating = function(id, newRating) {
+            update(ref(db_fb, `cs_tournament/players/${id}`), { rating: parseInt(newRating) }).then(() => {
+                showToast("Reyting yangilandi!");
+            });
+        }
+
+        window.deletePlayer = function(id, nickname) {
+            if(confirm(`"${nickname}" o'chirilsinmi?`)) {
+                remove(ref(db_fb, `cs_tournament/players/${id}`)).then(() => {
+                    showToast("O'chirildi.");
+                });
+            }
+        }
+
+        window.confirmAndTriggerRandom = function() {
+            const approvedPlayers = players.filter(p => p.status === 'approved');
+            
+            if(approvedPlayers.length < 2) {
+                showToast("Kamida 2 ta tasdiqlangan o'yinchi kerak!", true);
+                return;
+            }
+            triggerAutomaticSlotSequence(approvedPlayers);
+        }
+
+        let queueGlobal = [];
+        let currentAlphaGlobal = [];
+        let currentBetaGlobal = [];
+        let approvedGlobal = [];
+
+        // ENGMUKAMMAL BALANSLASH ALGORITMI
+        function findOptimalBalancedTeams(approvedList) {
+            const n = approvedList.length;
+            const halfSize = Math.floor(n / 2);
+            let bestDiff = Infinity;
+            let bestAlpha = [];
+            let bestBeta = [];
+
+            // Barcha guruh birikmalarini ko'rib chiqish (Combination Generation)
+            function getCombinations(arr, k) {
+                let result = [];
+                function helper(start, combo) {
+                    if (combo.length === k) {
+                        result.push([...combo]);
+                        return;
+                    }
+                    for (let i = start; i < arr.length; i++) {
+                        combo.push(arr[i]);
+                        helper(i + 1, combo);
+                        combo.pop();
+                    }
+                }
+                helper(0, []);
+                return result;
+            }
+
+            const combinations = getCombinations(approvedList, halfSize);
+
+            combinations.forEach(alphaCandidate => {
+                const alphaIds = new Set(alphaCandidate.map(p => p.id));
+                const betaCandidate = approvedList.filter(p => !alphaIds.has(p.id));
+
+                const sumA = alphaCandidate.reduce((acc, p) => acc + (p.rating || 0), 0);
+                const sumB = betaCandidate.reduce((acc, p) => acc + (p.rating || 0), 0);
+                const diff = Math.abs(sumA - sumB);
+
+                if (diff < bestDiff) {
+                    bestDiff = diff;
+                    bestAlpha = alphaCandidate;
+                    bestBeta = betaCandidate;
+                }
+            });
+
+            // Randomlik elementini qo'shish: Har bir jamoa ichidagi tartibni tasodifiy almashtirish
+            bestAlpha.sort(() => Math.random() - 0.5);
+            bestBeta.sort(() => Math.random() - 0.5);
+
+            return { alpha: bestAlpha, beta: bestBeta };
+        }
+
+        function triggerAutomaticSlotSequence(approvedPlayers) {
+            approvedGlobal = approvedPlayers;
+            
+            // Eng mukammal balanslangan jamoalarni topish
+            const balancedResult = findOptimalBalancedTeams(approvedPlayers);
+            const targetAlpha = balancedResult.alpha;
+            const targetBeta = balancedResult.beta;
+
+            queueGlobal = [];
+            let maxLen = Math.max(targetAlpha.length, targetBeta.length);
+            for(let i = 0; i < maxLen; i++) {
+                if(i < targetAlpha.length) queueGlobal.push({ player: targetAlpha[i], teamType: "alpha" });
+                if(i < targetBeta.length) queueGlobal.push({ player: targetBeta[i], teamType: "beta" });
+            }
+
+            currentAlphaGlobal = [];
+            currentBetaGlobal = [];
+
+            processNextQueueItem();
+        }
+
+        function processNextQueueItem() {
+            if (queueGlobal.length === 0) {
+                set(slotStateRef, { active: false });
+                showToast("Barcha o'yinchilar jamoalarga mukammal balans bilan taqsimlandi!");
+                sendTournamentImageToTelegram();
+                return;
+            }
+
+            let currentMove = queueGlobal.shift();
+            let nextPlayer = currentMove.player;
+
+            let remainingPool = approvedGlobal.filter(p => 
+                !currentAlphaGlobal.some(a => a.id === p.id) && !currentBetaGlobal.some(b => b.id === p.id)
+            );
+
+            if (remainingPool.length <= 1) {
+                if (currentMove.teamType === "alpha") {
+                    currentAlphaGlobal.push(nextPlayer);
+                } else {
+                    currentBetaGlobal.push(nextPlayer);
+                }
+
+                let sumAlpha = currentAlphaGlobal.reduce((acc, p) => acc + p.rating, 0);
+                let sumBeta = currentBetaGlobal.reduce((acc, p) => acc + p.rating, 0);
+
+                set(teamsRef, {
+                    teamAlpha: currentAlphaGlobal,
+                    teamBeta: currentBetaGlobal,
+                    sumAlpha: sumAlpha,
+                    sumBeta: sumBeta
+                });
+
+                set(slotStateRef, { active: true, isLastPlayer: true });
+                currentAnimationTimeout = setTimeout(processNextQueueItem, 1500);
+                return;
+            }
+
+            let poolForReel = [];
+            let lastAddedId = null;
+            while(poolForReel.length < 60) {
+                let availableChunk = remainingPool.filter(p => p.id !== lastAddedId);
+                if(availableChunk.length === 0) availableChunk = remainingPool;
+                let randomPlayer = availableChunk[Math.floor(Math.random() * availableChunk.length)];
+                poolForReel.push(randomPlayer);
+                lastAddedId = randomPlayer.id;
+            }
+            
+            if(poolForReel[poolForReel.length - 1].id === nextPlayer.id) {
+                poolForReel[poolForReel.length - 1] = remainingPool.find(p => p.id !== nextPlayer.id) || nextPlayer;
+            }
+            poolForReel.push(nextPlayer);
+
+            set(slotStateRef, {
+                active: true,
+                isLastPlayer: false,
+                teamType: currentMove.teamType,
+                pool: poolForReel
+            });
+
+            currentAnimationTimeout = setTimeout(() => {
+                finalizePlayerAddition(currentMove.teamType, nextPlayer);
+            }, 7250);
+        }
+
+        window.stopSlotEarly = function() {
+            if(currentAnimationTimeout) {
+                clearTimeout(currentAnimationTimeout);
+                showToast("Ruletka admin tomonidan to'xtatildi!");
+                processNextQueueItem();
+            }
+        };
+
+        function finalizePlayerAddition(teamType, nextPlayer) {
+            if (teamType === "alpha") {
+                currentAlphaGlobal.push(nextPlayer);
+            } else {
+                currentBetaGlobal.push(nextPlayer);
+            }
+
+            let sumAlpha = currentAlphaGlobal.reduce((acc, p) => acc + p.rating, 0);
+            let sumBeta = currentBetaGlobal.reduce((acc, p) => acc + p.rating, 0);
+
+            set(teamsRef, {
+                teamAlpha: currentAlphaGlobal,
+                teamBeta: currentBetaGlobal,
+                sumAlpha: sumAlpha,
+                sumBeta: sumBeta
+            });
+
+            setTimeout(processNextQueueItem, 900);
+        }
+
+        function sendTournamentImageToTelegram() {
+            const bannerElement = document.getElementById('tournament-banner-area');
+            html2canvas(bannerElement, { backgroundColor: '#0d1017', scale: 2, logging: false }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const formData = new FormData();
+                    formData.append('chat_id', ADMIN_USER_ID);
+                    formData.append('photo', blob, 'cs2_turnir_jamoalar.png');
+                    formData.append('caption', '🏆 CS2 Pro Turnir - Mukammal Balanslangan Jamoalar!');
+                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+                }, 'image/png');
+            });
+        }
+
+        window.clearTeamsOnly = function() {
+            if(confirm("Mavjud jamoalar taqsimoti o'chirilsinmi?")) {
+                set(teamsRef, null);
+                set(slotStateRef, { active: false });
+                showToast("Jamoalar taqsimoti tozalandi.");
+            }
+        }
+
+        window.resetTournament = function() {
+            if(confirm("Barcha ma'lumotlar o'chirilsinmi?")) {
+                set(playersRef, null);
+                set(teamsRef, null);
+                set(slotStateRef, { active: false });
+                set(voiceRoomRef, null);
+                showToast("Barcha ma'lumotlar tozalandi.");
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('total-players-count').innerText = players.length;
+            
+            const approvedContainer = document.getElementById('approved-players-container');
+            const approvedList = players.filter(p => p.status === 'approved');
+            document.getElementById('approved-count').innerText = approvedList.length;
+
+            if(approvedList.length === 0) {
+                approvedContainer.innerHTML = `<div class="empty-approved-msg">Hozircha tasdiqlangan ishtirokchilar yo'q.</div>`;
+            } else {
+                let chipsHtml = approvedList.map(p => {
+                    let isMe = p.deviceId === deviceId;
+                    let eloClass = isMe ? 'owner-elo-glow' : '';
+                    return `
+                        <div class="player-chip">
+                            <div class="player-chip-info">
+                                <div class="avatar-box">${CS_CHARACTERS[p.avatarIndex || 0].svg}</div>
+                                <div>
+                                    <div class="player-chip-name">${escapeHtml(p.nickname)}</div>
+                                    <div style="font-size: 9px; color: var(--text-main); text-transform: uppercase;">${CS_CHARACTERS[p.avatarIndex || 0].name}</div>
+                                </div>
+                            </div>
+                            <span class="player-chip-rating ${eloClass}">${p.rating} REYTING</span>
+                        </div>
+                    `;
+                }).join('');
+                approvedContainer.innerHTML = `<div class="approved-players-grid">${chipsHtml}</div>`;
+            }
+
+            const tbody = document.getElementById('admin-players-tbody');
+            tbody.innerHTML = '';
+
+            if(players.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #64748b; padding: 20px;">O'yinchilar yo'q</td></tr>`;
+            } else {
+                players.forEach(p => {
+                    const tr = document.createElement('tr');
+                    const statusBadge = p.status === 'approved' 
+                        ? `<span class="status-badge approved">Tasdiqlangan</span>` 
+                        : `<span class="status-badge pending">Kutilmoqda</span>`;
+
+                    const actionButtons = p.status === 'pending'
+                        ? `<button class="btn btn-success" style="padding: 4px 8px; font-size: 10px; margin-right: 4px;" onclick="approvePlayer('${p.id}')">OK</button>`
+                        : '';
+
+                    const voiceAccessBtn = p.voiceAccess 
+                        ? `<button class="btn btn-success" style="padding: 4px 8px; font-size: 10px;" onclick="toggleVoiceAccess('${p.id}', true)"><i class="fa-solid fa-microphone"></i> Ruxsat berilgan</button>`
+                        : `<button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px;" onclick="toggleVoiceAccess('${p.id}', false)"><i class="fa-solid fa-microphone-slash"></i> Ruxsat berish</button>`;
+
+                    let isMe = p.deviceId === deviceId;
+                    let highlightText = isMe ? 'style="color: #00ff66; font-weight: 800;"' : 'style="font-weight: 700; color: #fff;"';
+
+                    tr.innerHTML = `
+                        <td><div class="avatar-box" style="width: 30px; height: 30px;" title="${CS_CHARACTERS[p.avatarIndex || 0].name}">${CS_CHARACTERS[p.avatarIndex || 0].svg}</div></td>
+                        <td ${highlightText}>${escapeHtml(p.nickname)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <select class="form-control" style="padding: 4px 6px; width: 65px; font-size: 12px;" onchange="updatePlayerRating('${p.id}', this.value)">
+                                <option value="1" ${p.rating == 1 ? 'selected' : ''}>1</option>
+                                <option value="2" ${p.rating == 2 ? 'selected' : ''}>2</option>
+                                <option value="3" ${p.rating == 3 ? 'selected' : ''}>3</option>
+                                <option value="4" ${p.rating == 4 ? 'selected' : ''}>4</option>
+                                <option value="5" ${p.rating == 5 ? 'selected' : ''}>5</option>
+                            </select>
+                        </td>
+                        <td>${voiceAccessBtn}</td>
+                        <td>
+                            ${actionButtons}
+                            <button class="btn btn-danger" style="padding: 4px 8px; font-size: 10px;" onclick="deletePlayer('${p.id}', '${escapeHtml(p.nickname)}')"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            const container = document.getElementById('public-teams-container');
+            if(!teamsState || (!teamsState.teamAlpha && !teamsState.teamBeta) || (!teamsState.teamAlpha?.length && !teamsState.teamBeta?.length)) {
+                container.innerHTML = `
+                    <div class="empty-teams-msg">
+                        <i class="fa-solid fa-hourglass-start" style="font-size: 30px; margin-bottom: 10px; display: block; color: var(--accent-purple);"></i>
+                        Hali jamoalar tuzilmadi. Admin tomonidan random qilinishini kuting...
+                    </div>
+                `;
+            } else {
+                let alphaHtml = (teamsState.teamAlpha || []).map(p => {
+                    let isMe = p.deviceId === deviceId;
+                    let eloClass = isMe ? 'owner-elo-glow' : '';
+                    return `
+                        <div class="team-member-card">
+                            <div class="member-info">
+                                <div class="avatar-box">${CS_CHARACTERS[p.avatarIndex || 0].svg}</div>
+                                <div>
+                                    <div class="member-name">${escapeHtml(p.nickname)}</div>
+                                    <div style="font-size: 8px; color: var(--text-main); text-transform: uppercase;">${CS_CHARACTERS[p.avatarIndex || 0].name}</div>
+                                </div>
+                            </div>
+                            <span class="member-rating ${eloClass}">${p.rating} ELO</span>
+                        </div>
+                    `;
+                }).join('');
+
+                let betaHtml = (teamsState.teamBeta || []).map(p => {
+                    let isMe = p.deviceId === deviceId;
+                    let eloClass = isMe ? 'owner-elo-glow' : '';
+                    return `
+                        <div class="team-member-card">
+                            <div class="member-info">
+                                <div class="avatar-box">${CS_CHARACTERS[p.avatarIndex || 0].svg}</div>
+                                <div>
+                                    <div class="member-name">${escapeHtml(p.nickname)}</div>
+                                    <div style="font-size: 8px; color: var(--text-main); text-transform: uppercase;">${CS_CHARACTERS[p.avatarIndex || 0].name}</div>
+                                </div>
+                            </div>
+                            <span class="member-rating ${eloClass}">${p.rating} ELo</span>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `
+                    <div class="team-box alpha">
+                        <div class="team-header">
+                            <div class="team-title-wrap"><i class="fa-solid fa-shield-halved"></i> Alpha</div>
+                            <div class="team-power-badge"><i class="fa-solid fa-bolt"></i> ${teamsState.sumAlpha || 0}</div>
+                        </div>
+                        <div class="team-members-list">${alphaHtml || '<span style="color:#64748b; font-size:10px;">Kutilmoqda...</span>'}</div>
+                    </div>
+                    <div class="team-box beta">
+                        <div class="team-header">
+                            <div class="team-title-wrap"><i class="fa-solid fa-shield"></i> Beta</div>
+                            <div class="team-power-badge"><i class="fa-solid fa-bolt"></i> ${teamsState.sumBeta || 0}</div>
+                        </div>
+                        <div class="team-members-list">${betaHtml || '<span style="color:#64748b; font-size:10px;">Kutilmoqda...</span>'}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
